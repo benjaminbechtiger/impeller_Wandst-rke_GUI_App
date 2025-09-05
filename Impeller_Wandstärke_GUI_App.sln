@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 15 for Windows Desktop
+VisualStudioVersion = 15.0.36324.19
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Impeller_Wandstärke_GUI_App", "Impeller_Wandstärke_GUI_App\Impeller_Wandstärke_GUI_App.csproj", "{D52B2482-1BC0-415C-AB04-E80A2BFAD0EF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D52B2482-1BC0-415C-AB04-E80A2BFAD0EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D52B2482-1BC0-415C-AB04-E80A2BFAD0EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D52B2482-1BC0-415C-AB04-E80A2BFAD0EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D52B2482-1BC0-415C-AB04-E80A2BFAD0EF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2B516B05-E61E-43D9-9858-697EAEB78A8B}
+	EndGlobalSection
+EndGlobal
