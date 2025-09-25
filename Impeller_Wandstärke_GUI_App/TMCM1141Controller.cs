@@ -11,10 +11,10 @@ namespace Impeller_Wandstärke_GUI_App
         private readonly Action<string, Color> _logger;
         private bool serial_was_open = false;
 
-        private byte axis = 2;
+        private byte axis = 0;
 
         // Konstruktor
-        public TMCM1141Controller(SerialPort serial, Action<string, Color> logger = null, byte slaveAddress = 2)
+        public TMCM1141Controller(SerialPort serial, Action<string, Color> logger, byte slaveAddress = 2)
         {
             _serial = serial ?? throw new ArgumentNullException(nameof(serial));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));

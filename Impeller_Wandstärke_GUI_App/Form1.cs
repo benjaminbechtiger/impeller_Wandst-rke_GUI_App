@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Drawing;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO.Ports;
 using System.Net.Sockets;
 using System.Threading;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Globalization;
 using Timer = System.Windows.Forms.Timer;
+
 
 namespace Impeller_Wandstärke_GUI_App
 {
@@ -17,6 +18,7 @@ namespace Impeller_Wandstärke_GUI_App
         // private Variabeln
         private SerialPort serialPortTMCM1141;
         private TMCM1141Controller tmcm1141Controller;
+        private DataPlotter dataPlotter;
         private TcpClient tcpClientKeyence;
         private NetworkStream netStreamKeyence;
         private Thread tcpThreadKeyence;
@@ -32,6 +34,8 @@ namespace Impeller_Wandstärke_GUI_App
         private int act_speed_TMCM1141;
         private double keyence_value;
         private readonly object keyenceLock = new object();
+        bool logged = false;
+        private int counter = 0;
 
         public Form1()
         {
@@ -41,31 +45,57 @@ namespace Impeller_Wandstärke_GUI_App
             InitTimerKeyenceSensor();
             InitTimerTMCM1141();
             InitMeasurementTimer();
+
+            dataPlotter = new DataPlotter(chartWallThickness, LogMessage);
+            groupBoxEingabe.Visible = false;
         }
 
         // Hardware Initialisierungen
 
         private void InitTMCM1141Controller()
         {
-            try
-            {
-                serialPortTMCM1141 = new SerialPort("COM4", 115200, Parity.None, 8, StopBits.One);
+            string[] ports = SerialPort.GetPortNames(); // alle verfügbaren COM-Ports
+            bool connected = false; 
 
-                var task = Task.Run(() => serialPortTMCM1141.Open());
-                if (!task.Wait(TimeSpan.FromSeconds(5)))
+            foreach (string portName in ports)
+            {
+                try
                 {
-                    throw new TimeoutException("Es konnte keine UART Verbindung hergestellt werden, Timeout 5000ms");
-                }
-                tmcm1141Controller = new TMCM1141Controller(serialPortTMCM1141, LogMessage);
-                tmcm1141Controller.SetPositioningSpeed(10);
+                    using (var serialPort = new SerialPort(portName, 115200, Parity.None, 8, StopBits.One))
+                    {
+                        serialPort.Open();
 
-                LogMessage("TMCM-1141 Verbindung hergestellt", Color.White);
+                        var controller = new TMCM1141Controller(serialPort, LogMessage);
+                        controller.SetPositioningSpeed(10);
+
+                        // Prüfen, ob Controller antwortet
+                        if (controller.GetActualPosition(out double pos))
+                        {
+                            tmcm1141Controller = controller; // Verbindung erfolgreich
+                            serialPortTMCM1141 = serialPort; // Port speichern
+                            LogMessage($"TMCM-1141 Verbindung hergestellt auf {portName}", Color.White);
+                            connected = true;
+                            break;
+                        }
+                        else
+                        {
+                            serialPort.Close(); // antwortet nicht -> Port schließen
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    LogMessage($"Fehler auf Port {portName}: {ex.Message}", Color.Red);
+                }
             }
-            catch (Exception ex)
+
+            if (!connected && !logged)
             {
-                LogMessage("TMCM-1141 Fehler: " + ex.Message, Color.Red);
+                LogMessage("TMCM-1141 konnte auf keinem Port gefunden werden!", Color.Red);
+                logged = true;
             }
         }
+
 
         private void InitKeyenceSensor()
         {
@@ -148,7 +178,26 @@ namespace Impeller_Wandstärke_GUI_App
         // Kontinuerliches Auslesen der Schrittmotor-Geschwindigkeit
         private void Timer_Tick_TMCM1141(object sender, EventArgs e)
         {
-            tmcm1141Controller.GetActualSpeed(out act_speed_TMCM1141);  
+            if (tmcm1141Controller != null)
+            {
+                try
+                {
+                    tmcm1141Controller.GetActualSpeed(out act_speed_TMCM1141);
+                }
+                catch (Exception ex)
+                {
+                    LogMessage("Fehler beim Auslesen der Geschwindigkeit: " + ex.Message, Color.Red);
+                }
+            }
+            else
+            {
+                counter++;
+                if (counter > 100)
+                {
+                    InitTMCM1141Controller();
+                    counter = 0;
+                }
+            }
         }
 
         // Wenn Messung gestartet wurde, werden Messwerte mit Zeitstempeln gesammelt 
@@ -159,8 +208,6 @@ namespace Impeller_Wandstärke_GUI_App
             {
                 long elapsedMs = stopwatch.ElapsedMilliseconds;
                 double currentValue;
-
-                buttonStart.Enabled = false;
 
                 lock (keyenceLock)
                 {
@@ -178,10 +225,29 @@ namespace Impeller_Wandstärke_GUI_App
                 int displayCount = Math.Min(10, count);
 
                 buttonStart.Enabled = true;
+                buttonStart.BackColor = Color.GreenYellow;
 
                 LogMessage("Messung beendet", Color.LightBlue);
                 LogMessage("Letzte Messwerte: (..." + string.Join(", ", measurementValues.GetRange(count - displayCount, displayCount)) + ")", Color.LightGreen);
                 LogMessage("Letzte Messzeiten: (..." + string.Join(", ", measurementTimeMs.GetRange(count - displayCount, displayCount)) + ")", Color.LightBlue);
+
+                var fitter = new PolyFitter(measurementTimeMs, measurementValues, polynomialDegree: 3);
+                fitter.FitCurve();
+                double[] fittedValues = fitter.GetFittedValues();
+                double diffFit = fitter.GetDiff();
+                double maxVal = fitter.GetMax();
+                int max_index = fitter.GetMaxIndex();
+                double minVal = fitter.GetMin();
+                int min_index = fitter.GetMinIndex();
+
+                // Chart plotten
+                dataPlotter.SetLimits(0, 360, 0, 2);
+                dataPlotter.PlotData(measurementTimeMs, measurementValues);
+                dataPlotter.PlotFittedCurve(measurementTimeMs, fittedValues, min_index, max_index, "Gefittet");
+
+                labelMinWandMess.Text = minVal.ToString("F3");
+                labelMaxWandMess.Text = maxVal.ToString("F3");
+                labelDiffWandMess.Text = diffFit.ToString("F3");
 
                 measurementTimer.Stop();
                 stopwatch.Stop();
@@ -201,15 +267,20 @@ namespace Impeller_Wandstärke_GUI_App
                     {
                         string msg = Encoding.ASCII.GetString(buffer, 0, bytes).Trim();
 
-                        LogMessage("Keyence Sensor: " + msg, Color.White);
+                        // CSV-Teile aufsplitten
+                        string[] parts = msg.Split(',');
 
-                        labelActValMess.Invoke((Action)(() => labelActValMess.Text = msg));
-
-                        if (double.TryParse(msg, out double value))
+                        if (parts.Length >= 2)
                         {
-                            lock (keyenceLock)
+                            string valuePart = parts[1].Trim();
+                            labelActValMess.Invoke((Action)(() => labelActValMess.Text = valuePart));
+
+                            if (double.TryParse(valuePart, NumberStyles.Float, CultureInfo.InvariantCulture, out double value))
                             {
-                                keyence_value = value;
+                                lock (keyenceLock)
+                                {
+                                    keyence_value = value;
+                                }
                             }
                         }
                     }
@@ -246,14 +317,21 @@ namespace Impeller_Wandstärke_GUI_App
         {
             if (tmcm1141Controller != null)
             {
+                buttonStart.Enabled = false;
+                buttonStart.BackColor = Color.Red;
+                labelMinWandMess.Text = "0.000";
+                labelDiffWandMess.Text = "0.000";
+                dataPlotter.NewSeries("Wandstärke");
                 try
                 {
                     if (tmcm1141Controller.ResetPosition())                         //Position Achse Zurücksetzen
                     {
                         bool success = tmcm1141Controller.MovePositionAbs(1);       //1 Umdrehung
 
-                        if (success)
+                        if (success) // wenn die Umdrehung gestartet wird
                         {
+                            measurementTimeMs.Clear();
+                            measurementValues.Clear();
                             stopwatch.Restart();
                             measurementTimer.Start();
                             LogMessage("Rotation gestartet", Color.White);
@@ -268,6 +346,10 @@ namespace Impeller_Wandstärke_GUI_App
                 {
                     LogMessage("TMCM-1141 Ausnahme: " + ex.Message, Color.Red);
                 }
+            }
+            else
+            {
+                LogMessage("TMCM-1141 ist nicht verbunden!", Color.Yellow);
             }
         }
     }
