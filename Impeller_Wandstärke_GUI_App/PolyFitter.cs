@@ -54,16 +54,65 @@ namespace Impeller_Wandstärke_GUI_App
             }).ToArray();
         }
 
+        /// <summary>
+        /// Sinus-Schwingung in Messwerte fitten mit Filter-Option robust
+        /// </summary>
+        /// <param name="period"></param>
+        /// <param name="robust"></param>
+        public void FitSinus(double period, bool robust = false)
+        {
+            double[] xFiltered = x;
+            double[] yFiltered = y;
+
+            if (robust)
+            {
+                // Einfache Ausreißer-Filterung
+                double mean = y.Average();
+                double std = Math.Sqrt(y.Average(v => (v - mean) * (v - mean)));
+                var filteredIndices = y.Select((v, i) => new { v, i })
+                                       .Where(p => Math.Abs(p.v - mean) <= 2 * std)
+                                       .Select(p => p.i)
+                                       .ToArray();
+                xFiltered = filteredIndices.Select(i => x[i]).ToArray();
+                yFiltered = filteredIndices.Select(i => y[i]).ToArray();
+            }
+
+            double omega = 2.0 * Math.PI / period;
+
+            // Matrix A aufbauen
+            int n = xFiltered.Length;
+            double[,] A = new double[n, 3];
+            double[] Y = yFiltered.ToArray();
+
+            for (int i = 0; i < n; i++)
+            {
+                A[i, 0] = 1.0;                       // a0
+                A[i, 1] = Math.Cos(omega * xFiltered[i]); // a1
+                A[i, 2] = Math.Sin(omega * xFiltered[i]); // b1
+            }
+
+            // Normalgleichungen
+            var At = Transpose(A);
+            var AtA = Multiply(At, A);
+            var AtY = Multiply(At, Y);
+
+            double[] c = GaussianElimination(AtA, AtY); // [a0, a1, b1]
+            coeffs = c;
+
+            // Gefittete Werte berechnen
+            yFit = x.Select(xi =>
+                c[0] + c[1] * Math.Cos(omega * xi) + c[2] * Math.Sin(omega * xi)
+            ).ToArray();
+        }
+
+        // Getter Methoden
+
         public double[] GetFittedValues()
         {
             if (yFit == null)
                 throw new InvalidOperationException("Curve must be fitted first. Call FitCurve() first.");
             return yFit;
         }
-
-        public double GetMin() => yFit.Min();
-        public double GetMax() => yFit.Max();
-        public double GetDiff() => yFit.Max() - yFit.Min();
 
         public int GetMinIndex()
         {
@@ -78,6 +127,13 @@ namespace Impeller_Wandstärke_GUI_App
             double maxVal = yFit.Max();
             return Array.IndexOf(yFit, maxVal);
         }
+
+        public double GetMin() => yFit.Min();
+        public double GetMax() => yFit.Max();
+        public double GetDiff() => yFit.Max() - yFit.Min();
+        public double GetSinusAmplitude() => Math.Sqrt(coeffs[1] * coeffs[1] + coeffs[2] * coeffs[2]);
+        public double GetSinusPhase() => Math.Atan2(coeffs[2], coeffs[1]); // Phase in Radiant
+        public double GetSinusOffset() => coeffs[0];
 
         // ==============================
         // Interne Hilfsmethoden

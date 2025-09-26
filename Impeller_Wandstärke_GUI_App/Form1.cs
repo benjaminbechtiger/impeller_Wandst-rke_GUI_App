@@ -204,7 +204,7 @@ namespace Impeller_Wandstärke_GUI_App
         // bis die Drehung des Schrittmotors beendet ist (speed == 0)
         private void MeasurementTimer_Tick(object sender, EventArgs e)
         {
-            if (act_speed_TMCM1141 > 0)
+            if (act_speed_TMCM1141 != 0)
             {
                 long elapsedMs = stopwatch.ElapsedMilliseconds;
                 double currentValue;
@@ -231,8 +231,8 @@ namespace Impeller_Wandstärke_GUI_App
                 LogMessage("Letzte Messwerte: (..." + string.Join(", ", measurementValues.GetRange(count - displayCount, displayCount)) + ")", Color.LightGreen);
                 LogMessage("Letzte Messzeiten: (..." + string.Join(", ", measurementTimeMs.GetRange(count - displayCount, displayCount)) + ")", Color.LightBlue);
 
-                var fitter = new PolyFitter(measurementTimeMs, measurementValues, polynomialDegree: 3);
-                fitter.FitCurve();
+                var fitter = new PolyFitter(measurementTimeMs, measurementValues, polynomialDegree: 5);
+                fitter.FitCurve(true, true);
                 double[] fittedValues = fitter.GetFittedValues();
                 double diffFit = fitter.GetDiff();
                 double maxVal = fitter.GetMax();
@@ -326,7 +326,7 @@ namespace Impeller_Wandstärke_GUI_App
                 {
                     if (tmcm1141Controller.ResetPosition())                         //Position Achse Zurücksetzen
                     {
-                        bool success = tmcm1141Controller.MovePositionAbs(1);       //1 Umdrehung
+                        bool success = tmcm1141Controller.MovePositionAbs(-1);       //-1 Umdrehung
 
                         if (success) // wenn die Umdrehung gestartet wird
                         {
