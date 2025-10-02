@@ -12,7 +12,7 @@ using Timer = System.Windows.Forms.Timer;
 
 
 namespace Impeller_Wandstärke_GUI_App
-{
+{ 
     public partial class Form1 : Form
     {
         // private Variabeln
@@ -34,8 +34,15 @@ namespace Impeller_Wandstärke_GUI_App
         private int act_speed_TMCM1141;
         private double keyence_value;
         private readonly object keyenceLock = new object();
-        bool logged = false;
+        private bool logged = false;
         private int counter = 0;
+        private int selected_program;
+        private double tol_diff;
+        private double tol_min;
+        private bool use_tol_min;
+
+        private double y_min;
+        private double y_max;
 
         public Form1()
         {
@@ -47,7 +54,12 @@ namespace Impeller_Wandstärke_GUI_App
             InitMeasurementTimer();
 
             dataPlotter = new DataPlotter(chartWallThickness, LogMessage);
-            groupBoxEingabe.Visible = false;
+            comboBoxProgram.SelectedIndex = 0;
+            labelTolMax.Visible = false;
+            labelTolMaxT.Visible = false;
+            labelMinWandMess.Text = "";
+            labelMaxWandMess.Text = "";
+            labelDiffWandMess.Text = "";
         }
 
         // Hardware Initialisierungen
@@ -125,9 +137,13 @@ namespace Impeller_Wandstärke_GUI_App
                 LogMessage("Verbindung zum Keyence Sensor hergestellt", Color.White);
             }
             catch (Exception ex)
-
             {
                 LogMessage("Keyence Fehler: " + ex.Message, Color.Red);
+            }
+            finally
+            {
+                labelActValMess.Text = "N/A";
+                labelActValMess.ForeColor = Color.Gray;
             }
         }
 
@@ -231,26 +247,42 @@ namespace Impeller_Wandstärke_GUI_App
                 LogMessage("Letzte Messwerte: (..." + string.Join(", ", measurementValues.GetRange(count - displayCount, displayCount)) + ")", Color.LightGreen);
                 LogMessage("Letzte Messzeiten: (..." + string.Join(", ", measurementTimeMs.GetRange(count - displayCount, displayCount)) + ")", Color.LightBlue);
 
-                var fitter = new PolyFitter(measurementTimeMs, measurementValues, polynomialDegree: 5);
-                fitter.FitCurve(true, true);
-                double[] fittedValues = fitter.GetFittedValues();
-                double diffFit = fitter.GetDiff();
-                double maxVal = fitter.GetMax();
-                int max_index = fitter.GetMaxIndex();
-                double minVal = fitter.GetMin();
-                int min_index = fitter.GetMinIndex();
-
-                // Chart plotten
-                dataPlotter.SetLimits(0, 360, 0, 2);
-                dataPlotter.PlotData(measurementTimeMs, measurementValues);
-                dataPlotter.PlotFittedCurve(measurementTimeMs, fittedValues, min_index, max_index, "Gefittet");
-
-                labelMinWandMess.Text = minVal.ToString("F3");
-                labelMaxWandMess.Text = maxVal.ToString("F3");
-                labelDiffWandMess.Text = diffFit.ToString("F3");
+                DisplayMeasurement();
 
                 measurementTimer.Stop();
                 stopwatch.Stop();
+            }
+        }
+
+        // Messwerte fitten, Daten plotten und Anzeige updaten
+        private void DisplayMeasurement()
+        {
+            var fitter = new PolyFitter(measurementTimeMs, measurementValues, polynomialDegree: 5);
+            fitter.FitCurve(true, true);
+            double[] fittedValues = fitter.GetFittedValues();
+            double diffVal = fitter.GetDiff();
+            double maxVal = fitter.GetMax();
+            int max_index = fitter.GetMaxIndex();
+            double minVal = fitter.GetMin();
+            int min_index = fitter.GetMinIndex();
+
+            dataPlotter.SetLimits(y_min, y_max);
+            dataPlotter.PlotData(measurementTimeMs, measurementValues);
+            dataPlotter.PlotFittedCurve(measurementTimeMs, fittedValues, min_index, max_index, "Gefittet");
+
+            labelMinWandMess.Text = minVal.ToString("F3");
+            labelMaxWandMess.Text = maxVal.ToString("F3");
+            labelDiffWandMess.Text = diffVal.ToString("F3");
+
+            labelDiffWandMess.ForeColor = diffVal > tol_diff ? Color.Red : Color.Green;
+
+            if (use_tol_min)
+            {
+                labelMinWandMess.ForeColor = minVal < tol_min ? Color.Red : Color.Green;
+            }
+            else
+            {
+                labelMinWandMess.ForeColor = Color.Black;
             }
         }
 
@@ -290,6 +322,10 @@ namespace Impeller_Wandstärke_GUI_App
             {
                 LogMessage("Keyence Empfangsfehler: " + ex.Message, Color.Red);
             }
+            finally
+            {
+                labelActValMess.Invoke((Action)(() => labelActValMess.Text = "N/A"));
+            }
         }
 
         // Logfunktion
@@ -319,8 +355,11 @@ namespace Impeller_Wandstärke_GUI_App
             {
                 buttonStart.Enabled = false;
                 buttonStart.BackColor = Color.Red;
-                labelMinWandMess.Text = "0.000";
-                labelDiffWandMess.Text = "0.000";
+                labelMinWandMess.Text = "";
+                labelMaxWandMess.Text = "";
+                labelDiffWandMess.Text = "";
+                labelDiffWandMess.ForeColor = Color.Black;
+                labelMinWandMess.ForeColor = Color.Black;
                 dataPlotter.NewSeries("Wandstärke");
                 try
                 {
@@ -351,6 +390,36 @@ namespace Impeller_Wandstärke_GUI_App
             {
                 LogMessage("TMCM-1141 ist nicht verbunden!", Color.Yellow);
             }
+        }
+
+        // Aktion bei Programmwechsel
+        private void comboBoxProgram_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            selected_program = comboBoxProgram.SelectedIndex;
+
+            switch (selected_program)
+            {
+                case 0:
+                    tol_diff = 0.15;
+                    use_tol_min = false;
+                    y_min = 1.6;
+                    y_max = 2.4;
+                    break;
+                case 1:
+                    tol_diff = 0.24;
+                    tol_min = 1.5;
+                    use_tol_min = true;
+                    y_min = 1.2;
+                    y_max = 2.0;
+                    break;
+                default:
+                    break;
+            }
+
+            labelTolDiff.Text = tol_diff.ToString();
+            labelTolMin.Text = tol_min.ToString();
+            labelTolMin.Visible = use_tol_min;
+            labelTolMinT.Visible = use_tol_min;
         }
     }
 }

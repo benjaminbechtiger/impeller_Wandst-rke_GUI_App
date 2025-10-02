@@ -28,7 +28,7 @@ namespace Impeller_Wandstärke_GUI_App
             _logger?.Invoke(message, color);
         }
 
-        public void SetLimits(double x_min, double x_max, double y_min, double y_max)
+        public void SetLimits(double y_min, double y_max, double x_min = 0, double x_max = 360)
         {
             _chart.ChartAreas[0].AxisX.Minimum = x_min;
             _chart.ChartAreas[0].AxisX.Maximum = x_max;
