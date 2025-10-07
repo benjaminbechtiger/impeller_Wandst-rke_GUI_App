@@ -38,15 +38,20 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.chartWallThickness = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.buttonStart = new System.Windows.Forms.Button();
-            this.groupBoxToleranzen = new System.Windows.Forms.GroupBox();
+            this.groupBoxEinstellungen = new System.Windows.Forms.GroupBox();
+            this.checkBoxWANr = new System.Windows.Forms.CheckBox();
+            this.textBoxTeilnummer = new System.Windows.Forms.TextBox();
+            this.labelTeilnummer = new System.Windows.Forms.Label();
+            this.labelWANr = new System.Windows.Forms.Label();
+            this.textBoxWANr = new System.Windows.Forms.TextBox();
+            this.labelMessobjekt = new System.Windows.Forms.Label();
+            this.comboBoxProgram = new System.Windows.Forms.ComboBox();
             this.labelTolMaxT = new System.Windows.Forms.Label();
             this.labelTolMinT = new System.Windows.Forms.Label();
             this.labelTolDiffT = new System.Windows.Forms.Label();
             this.labelTolMax = new System.Windows.Forms.Label();
             this.labelTolMin = new System.Windows.Forms.Label();
             this.labelTolDiff = new System.Windows.Forms.Label();
-            this.labelMessobjekt = new System.Windows.Forms.Label();
-            this.comboBoxProgram = new System.Windows.Forms.ComboBox();
             this.labelActVal = new System.Windows.Forms.Label();
             this.labelActValMess = new System.Windows.Forms.Label();
             this.richTextBoxLog = new System.Windows.Forms.RichTextBox();
@@ -57,9 +62,12 @@
             this.labelMaxWand = new System.Windows.Forms.Label();
             this.labelMaxWandMess = new System.Windows.Forms.Label();
             this.groupBox1Messung = new System.Windows.Forms.GroupBox();
+            this.buttonSave = new System.Windows.Forms.Button();
+            this.groupBoxToleranzen = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.chartWallThickness)).BeginInit();
-            this.groupBoxToleranzen.SuspendLayout();
+            this.groupBoxEinstellungen.SuspendLayout();
             this.groupBox1Messung.SuspendLayout();
+            this.groupBoxToleranzen.SuspendLayout();
             this.SuspendLayout();
             // 
             // chartWallThickness
@@ -108,98 +116,85 @@
             // 
             this.buttonStart.BackColor = System.Drawing.Color.GreenYellow;
             this.buttonStart.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonStart.Location = new System.Drawing.Point(63, 34);
+            this.buttonStart.Location = new System.Drawing.Point(18, 56);
             this.buttonStart.Name = "buttonStart";
-            this.buttonStart.Size = new System.Drawing.Size(254, 152);
+            this.buttonStart.Size = new System.Drawing.Size(219, 120);
             this.buttonStart.TabIndex = 2;
             this.buttonStart.Text = "Messung Starten";
             this.buttonStart.UseVisualStyleBackColor = false;
             this.buttonStart.Click += new System.EventHandler(this.buttonStart_Click);
             // 
-            // groupBoxToleranzen
+            // groupBoxEinstellungen
             // 
-            this.groupBoxToleranzen.Controls.Add(this.labelTolMaxT);
-            this.groupBoxToleranzen.Controls.Add(this.labelTolMinT);
-            this.groupBoxToleranzen.Controls.Add(this.labelTolDiffT);
-            this.groupBoxToleranzen.Controls.Add(this.labelTolMax);
-            this.groupBoxToleranzen.Controls.Add(this.labelTolMin);
-            this.groupBoxToleranzen.Controls.Add(this.labelTolDiff);
-            this.groupBoxToleranzen.Controls.Add(this.labelMessobjekt);
-            this.groupBoxToleranzen.Controls.Add(this.comboBoxProgram);
-            this.groupBoxToleranzen.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBoxToleranzen.Location = new System.Drawing.Point(47, 46);
-            this.groupBoxToleranzen.Name = "groupBoxToleranzen";
-            this.groupBoxToleranzen.Size = new System.Drawing.Size(505, 779);
-            this.groupBoxToleranzen.TabIndex = 3;
-            this.groupBoxToleranzen.TabStop = false;
-            this.groupBoxToleranzen.Text = "Toleranzen";
+            this.groupBoxEinstellungen.Controls.Add(this.checkBoxWANr);
+            this.groupBoxEinstellungen.Controls.Add(this.textBoxTeilnummer);
+            this.groupBoxEinstellungen.Controls.Add(this.labelTeilnummer);
+            this.groupBoxEinstellungen.Controls.Add(this.labelWANr);
+            this.groupBoxEinstellungen.Controls.Add(this.textBoxWANr);
+            this.groupBoxEinstellungen.Controls.Add(this.labelMessobjekt);
+            this.groupBoxEinstellungen.Controls.Add(this.comboBoxProgram);
+            this.groupBoxEinstellungen.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBoxEinstellungen.Location = new System.Drawing.Point(47, 46);
+            this.groupBoxEinstellungen.Name = "groupBoxEinstellungen";
+            this.groupBoxEinstellungen.Size = new System.Drawing.Size(505, 387);
+            this.groupBoxEinstellungen.TabIndex = 3;
+            this.groupBoxEinstellungen.TabStop = false;
+            this.groupBoxEinstellungen.Text = "Einstellungen";
             // 
-            // labelTolMaxT
+            // checkBoxWANr
             // 
-            this.labelTolMaxT.AutoSize = true;
-            this.labelTolMaxT.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelTolMaxT.Location = new System.Drawing.Point(10, 489);
-            this.labelTolMaxT.Name = "labelTolMaxT";
-            this.labelTolMaxT.Size = new System.Drawing.Size(333, 37);
-            this.labelTolMaxT.TabIndex = 7;
-            this.labelTolMaxT.Text = "Maximale Wandstärke";
+            this.checkBoxWANr.AutoSize = true;
+            this.checkBoxWANr.Location = new System.Drawing.Point(278, 161);
+            this.checkBoxWANr.Name = "checkBoxWANr";
+            this.checkBoxWANr.Size = new System.Drawing.Size(205, 29);
+            this.checkBoxWANr.TabIndex = 12;
+            this.checkBoxWANr.Text = "WA-Nr. verwenden";
+            this.checkBoxWANr.UseVisualStyleBackColor = true;
+            this.checkBoxWANr.CheckedChanged += new System.EventHandler(this.checkBoxWANr_CheckedChanged);
             // 
-            // labelTolMinT
+            // textBoxTeilnummer
             // 
-            this.labelTolMinT.AutoSize = true;
-            this.labelTolMinT.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelTolMinT.Location = new System.Drawing.Point(10, 362);
-            this.labelTolMinT.Name = "labelTolMinT";
-            this.labelTolMinT.Size = new System.Drawing.Size(334, 37);
-            this.labelTolMinT.TabIndex = 6;
-            this.labelTolMinT.Text = "Minimale Wandstärke:";
+            this.textBoxTeilnummer.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBoxTeilnummer.Location = new System.Drawing.Point(17, 332);
+            this.textBoxTeilnummer.Name = "textBoxTeilnummer";
+            this.textBoxTeilnummer.Size = new System.Drawing.Size(466, 44);
+            this.textBoxTeilnummer.TabIndex = 11;
+            this.textBoxTeilnummer.TextChanged += new System.EventHandler(this.textBoxTeilnummer_TextChanged);
             // 
-            // labelTolDiffT
+            // labelTeilnummer
             // 
-            this.labelTolDiffT.AutoSize = true;
-            this.labelTolDiffT.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelTolDiffT.Location = new System.Drawing.Point(10, 240);
-            this.labelTolDiffT.Name = "labelTolDiffT";
-            this.labelTolDiffT.Size = new System.Drawing.Size(297, 37);
-            this.labelTolDiffT.TabIndex = 5;
-            this.labelTolDiffT.Text = "Maximale Differenz:";
+            this.labelTeilnummer.AutoSize = true;
+            this.labelTeilnummer.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelTeilnummer.Location = new System.Drawing.Point(10, 292);
+            this.labelTeilnummer.Name = "labelTeilnummer";
+            this.labelTeilnummer.Size = new System.Drawing.Size(195, 37);
+            this.labelTeilnummer.TabIndex = 10;
+            this.labelTeilnummer.Text = "Teilnummer:";
             // 
-            // labelTolMax
+            // labelWANr
             // 
-            this.labelTolMax.AutoSize = true;
-            this.labelTolMax.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelTolMax.Location = new System.Drawing.Point(10, 534);
-            this.labelTolMax.Name = "labelTolMax";
-            this.labelTolMax.Size = new System.Drawing.Size(98, 37);
-            this.labelTolMax.TabIndex = 4;
-            this.labelTolMax.Text = "0.000";
+            this.labelWANr.AutoSize = true;
+            this.labelWANr.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelWANr.Location = new System.Drawing.Point(10, 189);
+            this.labelWANr.Name = "labelWANr";
+            this.labelWANr.Size = new System.Drawing.Size(213, 37);
+            this.labelWANr.TabIndex = 9;
+            this.labelWANr.Text = "WA-Nummer:";
             // 
-            // labelTolMin
+            // textBoxWANr
             // 
-            this.labelTolMin.AutoSize = true;
-            this.labelTolMin.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelTolMin.Location = new System.Drawing.Point(10, 408);
-            this.labelTolMin.Name = "labelTolMin";
-            this.labelTolMin.Size = new System.Drawing.Size(98, 37);
-            this.labelTolMin.TabIndex = 3;
-            this.labelTolMin.Text = "0.000";
-            // 
-            // labelTolDiff
-            // 
-            this.labelTolDiff.AutoSize = true;
-            this.labelTolDiff.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelTolDiff.ForeColor = System.Drawing.Color.Black;
-            this.labelTolDiff.Location = new System.Drawing.Point(10, 286);
-            this.labelTolDiff.Name = "labelTolDiff";
-            this.labelTolDiff.Size = new System.Drawing.Size(98, 37);
-            this.labelTolDiff.TabIndex = 2;
-            this.labelTolDiff.Text = "0.000";
+            this.textBoxWANr.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBoxWANr.Location = new System.Drawing.Point(17, 229);
+            this.textBoxWANr.Name = "textBoxWANr";
+            this.textBoxWANr.Size = new System.Drawing.Size(466, 44);
+            this.textBoxWANr.TabIndex = 8;
+            this.textBoxWANr.TextChanged += new System.EventHandler(this.textBoxWANr_TextChanged);
             // 
             // labelMessobjekt
             // 
             this.labelMessobjekt.AutoSize = true;
             this.labelMessobjekt.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelMessobjekt.Location = new System.Drawing.Point(10, 46);
+            this.labelMessobjekt.Location = new System.Drawing.Point(10, 36);
             this.labelMessobjekt.Name = "labelMessobjekt";
             this.labelMessobjekt.Size = new System.Drawing.Size(186, 37);
             this.labelMessobjekt.TabIndex = 1;
@@ -213,17 +208,78 @@
             this.comboBoxProgram.Items.AddRange(new object[] {
             "2000er Zwischenbearbeitung",
             "2000er Endbearbeitung"});
-            this.comboBoxProgram.Location = new System.Drawing.Point(17, 95);
+            this.comboBoxProgram.Location = new System.Drawing.Point(17, 76);
             this.comboBoxProgram.Name = "comboBoxProgram";
             this.comboBoxProgram.Size = new System.Drawing.Size(466, 45);
             this.comboBoxProgram.TabIndex = 0;
             this.comboBoxProgram.SelectedIndexChanged += new System.EventHandler(this.comboBoxProgram_SelectedIndexChanged);
             // 
+            // labelTolMaxT
+            // 
+            this.labelTolMaxT.AutoSize = true;
+            this.labelTolMaxT.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelTolMaxT.Location = new System.Drawing.Point(10, 277);
+            this.labelTolMaxT.Name = "labelTolMaxT";
+            this.labelTolMaxT.Size = new System.Drawing.Size(333, 37);
+            this.labelTolMaxT.TabIndex = 7;
+            this.labelTolMaxT.Text = "Maximale Wandstärke";
+            // 
+            // labelTolMinT
+            // 
+            this.labelTolMinT.AutoSize = true;
+            this.labelTolMinT.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelTolMinT.Location = new System.Drawing.Point(10, 150);
+            this.labelTolMinT.Name = "labelTolMinT";
+            this.labelTolMinT.Size = new System.Drawing.Size(334, 37);
+            this.labelTolMinT.TabIndex = 6;
+            this.labelTolMinT.Text = "Minimale Wandstärke:";
+            // 
+            // labelTolDiffT
+            // 
+            this.labelTolDiffT.AutoSize = true;
+            this.labelTolDiffT.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelTolDiffT.Location = new System.Drawing.Point(10, 28);
+            this.labelTolDiffT.Name = "labelTolDiffT";
+            this.labelTolDiffT.Size = new System.Drawing.Size(297, 37);
+            this.labelTolDiffT.TabIndex = 5;
+            this.labelTolDiffT.Text = "Maximale Differenz:";
+            // 
+            // labelTolMax
+            // 
+            this.labelTolMax.AutoSize = true;
+            this.labelTolMax.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelTolMax.Location = new System.Drawing.Point(10, 322);
+            this.labelTolMax.Name = "labelTolMax";
+            this.labelTolMax.Size = new System.Drawing.Size(98, 37);
+            this.labelTolMax.TabIndex = 4;
+            this.labelTolMax.Text = "0.000";
+            // 
+            // labelTolMin
+            // 
+            this.labelTolMin.AutoSize = true;
+            this.labelTolMin.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelTolMin.Location = new System.Drawing.Point(10, 196);
+            this.labelTolMin.Name = "labelTolMin";
+            this.labelTolMin.Size = new System.Drawing.Size(98, 37);
+            this.labelTolMin.TabIndex = 3;
+            this.labelTolMin.Text = "0.000";
+            // 
+            // labelTolDiff
+            // 
+            this.labelTolDiff.AutoSize = true;
+            this.labelTolDiff.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelTolDiff.ForeColor = System.Drawing.Color.Black;
+            this.labelTolDiff.Location = new System.Drawing.Point(10, 74);
+            this.labelTolDiff.Name = "labelTolDiff";
+            this.labelTolDiff.Size = new System.Drawing.Size(98, 37);
+            this.labelTolDiff.TabIndex = 2;
+            this.labelTolDiff.Text = "0.000";
+            // 
             // labelActVal
             // 
             this.labelActVal.AutoSize = true;
             this.labelActVal.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelActVal.Location = new System.Drawing.Point(24, 671);
+            this.labelActVal.Location = new System.Drawing.Point(24, 247);
             this.labelActVal.Name = "labelActVal";
             this.labelActVal.Size = new System.Drawing.Size(294, 37);
             this.labelActVal.TabIndex = 5;
@@ -232,9 +288,9 @@
             // labelActValMess
             // 
             this.labelActValMess.AutoSize = true;
-            this.labelActValMess.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelActValMess.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelActValMess.ForeColor = System.Drawing.Color.Black;
-            this.labelActValMess.Location = new System.Drawing.Point(23, 708);
+            this.labelActValMess.Location = new System.Drawing.Point(23, 284);
             this.labelActValMess.Name = "labelActValMess";
             this.labelActValMess.Size = new System.Drawing.Size(119, 46);
             this.labelActValMess.TabIndex = 6;
@@ -244,7 +300,7 @@
             // 
             this.richTextBoxLog.BackColor = System.Drawing.Color.Black;
             this.richTextBoxLog.ForeColor = System.Drawing.Color.White;
-            this.richTextBoxLog.Location = new System.Drawing.Point(47, 884);
+            this.richTextBoxLog.Location = new System.Drawing.Point(47, 880);
             this.richTextBoxLog.Name = "richTextBoxLog";
             this.richTextBoxLog.Size = new System.Drawing.Size(1797, 206);
             this.richTextBoxLog.TabIndex = 7;
@@ -254,7 +310,7 @@
             // 
             this.labelDiffWand.AutoSize = true;
             this.labelDiffWand.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelDiffWand.Location = new System.Drawing.Point(23, 240);
+            this.labelDiffWand.Location = new System.Drawing.Point(24, 435);
             this.labelDiffWand.Name = "labelDiffWand";
             this.labelDiffWand.Size = new System.Drawing.Size(334, 37);
             this.labelDiffWand.TabIndex = 8;
@@ -264,7 +320,7 @@
             // 
             this.labelDiffWandMess.AutoSize = true;
             this.labelDiffWandMess.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelDiffWandMess.Location = new System.Drawing.Point(23, 277);
+            this.labelDiffWandMess.Location = new System.Drawing.Point(24, 472);
             this.labelDiffWandMess.Name = "labelDiffWandMess";
             this.labelDiffWandMess.Size = new System.Drawing.Size(119, 46);
             this.labelDiffWandMess.TabIndex = 9;
@@ -274,7 +330,7 @@
             // 
             this.labelMinWand.AutoSize = true;
             this.labelMinWand.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelMinWand.Location = new System.Drawing.Point(23, 362);
+            this.labelMinWand.Location = new System.Drawing.Point(24, 557);
             this.labelMinWand.Name = "labelMinWand";
             this.labelMinWand.Size = new System.Drawing.Size(316, 37);
             this.labelMinWand.TabIndex = 10;
@@ -284,7 +340,7 @@
             // 
             this.labelMinWandMess.AutoSize = true;
             this.labelMinWandMess.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelMinWandMess.Location = new System.Drawing.Point(22, 399);
+            this.labelMinWandMess.Location = new System.Drawing.Point(23, 594);
             this.labelMinWandMess.Name = "labelMinWandMess";
             this.labelMinWandMess.Size = new System.Drawing.Size(119, 46);
             this.labelMinWandMess.TabIndex = 11;
@@ -294,7 +350,7 @@
             // 
             this.labelMaxWand.AutoSize = true;
             this.labelMaxWand.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelMaxWand.Location = new System.Drawing.Point(23, 489);
+            this.labelMaxWand.Location = new System.Drawing.Point(24, 684);
             this.labelMaxWand.Name = "labelMaxWand";
             this.labelMaxWand.Size = new System.Drawing.Size(342, 37);
             this.labelMaxWand.TabIndex = 12;
@@ -304,7 +360,7 @@
             // 
             this.labelMaxWandMess.AutoSize = true;
             this.labelMaxWandMess.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelMaxWandMess.Location = new System.Drawing.Point(22, 526);
+            this.labelMaxWandMess.Location = new System.Drawing.Point(23, 721);
             this.labelMaxWandMess.Name = "labelMaxWandMess";
             this.labelMaxWandMess.Size = new System.Drawing.Size(119, 46);
             this.labelMaxWandMess.TabIndex = 13;
@@ -312,6 +368,7 @@
             // 
             // groupBox1Messung
             // 
+            this.groupBox1Messung.Controls.Add(this.buttonSave);
             this.groupBox1Messung.Controls.Add(this.buttonStart);
             this.groupBox1Messung.Controls.Add(this.labelMaxWandMess);
             this.groupBox1Messung.Controls.Add(this.labelActValMess);
@@ -329,24 +386,54 @@
             this.groupBox1Messung.TabStop = false;
             this.groupBox1Messung.Text = "Messung";
             // 
+            // buttonSave
+            // 
+            this.buttonSave.BackgroundImage = global::Impeller_Wandstärke_GUI_App.Properties.Resources.save_icon;
+            this.buttonSave.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.buttonSave.Location = new System.Drawing.Point(275, 65);
+            this.buttonSave.Name = "buttonSave";
+            this.buttonSave.Size = new System.Drawing.Size(82, 84);
+            this.buttonSave.TabIndex = 14;
+            this.buttonSave.UseVisualStyleBackColor = true;
+            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
+            // 
+            // groupBoxToleranzen
+            // 
+            this.groupBoxToleranzen.Controls.Add(this.labelTolDiffT);
+            this.groupBoxToleranzen.Controls.Add(this.labelTolDiff);
+            this.groupBoxToleranzen.Controls.Add(this.labelTolMaxT);
+            this.groupBoxToleranzen.Controls.Add(this.labelTolMin);
+            this.groupBoxToleranzen.Controls.Add(this.labelTolMax);
+            this.groupBoxToleranzen.Controls.Add(this.labelTolMinT);
+            this.groupBoxToleranzen.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBoxToleranzen.Location = new System.Drawing.Point(47, 453);
+            this.groupBoxToleranzen.Name = "groupBoxToleranzen";
+            this.groupBoxToleranzen.Size = new System.Drawing.Size(505, 372);
+            this.groupBoxToleranzen.TabIndex = 15;
+            this.groupBoxToleranzen.TabStop = false;
+            this.groupBoxToleranzen.Text = "Toleranzen";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1898, 1144);
+            this.Controls.Add(this.groupBoxToleranzen);
             this.Controls.Add(this.groupBox1Messung);
             this.Controls.Add(this.richTextBoxLog);
-            this.Controls.Add(this.groupBoxToleranzen);
+            this.Controls.Add(this.groupBoxEinstellungen);
             this.Controls.Add(this.chartWallThickness);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.Text = "Impeller Wandstärke";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             ((System.ComponentModel.ISupportInitialize)(this.chartWallThickness)).EndInit();
-            this.groupBoxToleranzen.ResumeLayout(false);
-            this.groupBoxToleranzen.PerformLayout();
+            this.groupBoxEinstellungen.ResumeLayout(false);
+            this.groupBoxEinstellungen.PerformLayout();
             this.groupBox1Messung.ResumeLayout(false);
             this.groupBox1Messung.PerformLayout();
+            this.groupBoxToleranzen.ResumeLayout(false);
+            this.groupBoxToleranzen.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -355,7 +442,7 @@
 
         private System.Windows.Forms.DataVisualization.Charting.Chart chartWallThickness;
         private System.Windows.Forms.Button buttonStart;
-        private System.Windows.Forms.GroupBox groupBoxToleranzen;
+        private System.Windows.Forms.GroupBox groupBoxEinstellungen;
         private System.Windows.Forms.Label labelActVal;
         private System.Windows.Forms.Label labelActValMess;
         private System.Windows.Forms.RichTextBox richTextBoxLog;
@@ -374,6 +461,13 @@
         private System.Windows.Forms.Label labelTolMinT;
         private System.Windows.Forms.Label labelTolMaxT;
         private System.Windows.Forms.GroupBox groupBox1Messung;
+        private System.Windows.Forms.Button buttonSave;
+        private System.Windows.Forms.TextBox textBoxWANr;
+        private System.Windows.Forms.GroupBox groupBoxToleranzen;
+        private System.Windows.Forms.Label labelTeilnummer;
+        private System.Windows.Forms.Label labelWANr;
+        private System.Windows.Forms.TextBox textBoxTeilnummer;
+        private System.Windows.Forms.CheckBox checkBoxWANr;
     }
 }
 

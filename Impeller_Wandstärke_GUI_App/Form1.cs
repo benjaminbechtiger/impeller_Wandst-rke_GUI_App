@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -25,7 +26,7 @@ namespace Impeller_Wandstärke_GUI_App
 
         private Timer timerKeyence;
         private Timer timerTMCM1141;
-        private Timer measurementTimer;
+        private Timer timerMeasurement;
         private Stopwatch stopwatch;
 
         private List<long> measurementTimeMs = new List<long>();
@@ -43,6 +44,9 @@ namespace Impeller_Wandstärke_GUI_App
 
         private double y_min;
         private double y_max;
+        double diffVal;
+        double maxVal;
+        double minVal;
 
         public Form1()
         {
@@ -52,9 +56,16 @@ namespace Impeller_Wandstärke_GUI_App
             InitTimerKeyenceSensor();
             InitTimerTMCM1141();
             InitMeasurementTimer();
+            InitWindowElements();
+        }
 
+        private void InitWindowElements()
+        {
             dataPlotter = new DataPlotter(chartWallThickness, LogMessage);
             comboBoxProgram.SelectedIndex = 0;
+            checkBoxWANr.Checked = true;
+            buttonSave.Visible = true;
+            buttonSave.Enabled = false;
             labelTolMax.Visible = false;
             labelTolMaxT.Visible = false;
             labelMinWandMess.Text = "";
@@ -168,9 +179,9 @@ namespace Impeller_Wandstärke_GUI_App
 
         private void InitMeasurementTimer()
         {
-            measurementTimer = new Timer();
-            measurementTimer.Interval = 100;
-            measurementTimer.Tick += MeasurementTimer_Tick;
+            timerMeasurement = new Timer();
+            timerMeasurement.Interval = 100;
+            timerMeasurement.Tick += MeasurementTimer_Tick;
             stopwatch = new Stopwatch();
         }
 
@@ -242,6 +253,7 @@ namespace Impeller_Wandstärke_GUI_App
 
                 buttonStart.Enabled = true;
                 buttonStart.BackColor = Color.GreenYellow;
+                buttonSave.Visible = true;
 
                 LogMessage("Messung beendet", Color.LightBlue);
                 LogMessage("Letzte Messwerte: (..." + string.Join(", ", measurementValues.GetRange(count - displayCount, displayCount)) + ")", Color.LightGreen);
@@ -249,7 +261,7 @@ namespace Impeller_Wandstärke_GUI_App
 
                 DisplayMeasurement();
 
-                measurementTimer.Stop();
+                timerMeasurement.Stop();
                 stopwatch.Stop();
             }
         }
@@ -259,11 +271,12 @@ namespace Impeller_Wandstärke_GUI_App
         {
             var fitter = new PolyFitter(measurementTimeMs, measurementValues, polynomialDegree: 5);
             fitter.FitCurve(true, true);
+
             double[] fittedValues = fitter.GetFittedValues();
-            double diffVal = fitter.GetDiff();
-            double maxVal = fitter.GetMax();
+            diffVal = fitter.GetDiff();
+            maxVal = fitter.GetMax();
             int max_index = fitter.GetMaxIndex();
-            double minVal = fitter.GetMin();
+            minVal = fitter.GetMin();
             int min_index = fitter.GetMinIndex();
 
             dataPlotter.SetLimits(y_min, y_max);
@@ -290,6 +303,7 @@ namespace Impeller_Wandstärke_GUI_App
         private void ReadKeyenceLoop()
         {
             byte[] buffer = new byte[1024];
+            labelActValMess.ForeColor = Color.Black;
             try
             {
                 while (netStreamKeyence != null && tcpClientKeyence.Connected)
@@ -325,6 +339,7 @@ namespace Impeller_Wandstärke_GUI_App
             finally
             {
                 labelActValMess.Invoke((Action)(() => labelActValMess.Text = "N/A"));
+                labelActValMess.ForeColor = Color.Gray;
             }
         }
 
@@ -355,6 +370,7 @@ namespace Impeller_Wandstärke_GUI_App
             {
                 buttonStart.Enabled = false;
                 buttonStart.BackColor = Color.Red;
+                buttonSave.Visible = false;
                 labelMinWandMess.Text = "";
                 labelMaxWandMess.Text = "";
                 labelDiffWandMess.Text = "";
@@ -372,7 +388,7 @@ namespace Impeller_Wandstärke_GUI_App
                             measurementTimeMs.Clear();
                             measurementValues.Clear();
                             stopwatch.Restart();
-                            measurementTimer.Start();
+                            timerMeasurement.Start();
                             LogMessage("Rotation gestartet", Color.White);
                         }
                         else
@@ -391,6 +407,48 @@ namespace Impeller_Wandstärke_GUI_App
                 LogMessage("TMCM-1141 ist nicht verbunden!", Color.Yellow);
             }
         }
+
+        private void buttonSave_Click(object sender, EventArgs e)
+        {
+            // Pfad erstellen
+            string ordner = comboBoxProgram.Text;
+            string wa_nr = textBoxWANr.Text;
+            string teilnummer = textBoxTeilnummer.Text;
+            string relativePath = $@"{ordner}\chart_{wa_nr}_{teilnummer}.png";
+            string fullPath = Path.Combine(Application.StartupPath, relativePath);
+
+            Directory.CreateDirectory(Path.GetDirectoryName(fullPath) ?? ".");
+
+            // Chart speichern
+            if (File.Exists(fullPath))
+            {
+                LogMessage($"Der Dateiname 'chart_{wa_nr}_{teilnummer}' existiert bereits, Bitte WA-Nummer. oder Teilnummer ändern", Color.Yellow);
+                return;
+            }
+
+            chartWallThickness.SaveImage(fullPath, System.Windows.Forms.DataVisualization.Charting.ChartImageFormat.Png);
+
+            LogMessage($"Chart gespeichert unter {fullPath}", Color.LightBlue);
+
+            // CSV-Datei erstellen/erweitern
+            string csvFile = Path.Combine(Application.StartupPath, ordner, "__chart_data.csv");
+            Directory.CreateDirectory(Path.GetDirectoryName(csvFile) ?? ".");
+
+            string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+            string line = $"{timestamp},{wa_nr},{teilnummer},{minVal},{maxVal},{diffVal}";
+
+            if (!File.Exists(csvFile))
+            {
+                string header = "Timestamp,WA_NR,Teilnummer,MinVal,MaxVal,DiffVal";
+                File.AppendAllText(csvFile, header + Environment.NewLine);
+            }
+
+            File.AppendAllText(csvFile, line + Environment.NewLine);
+
+            LogMessage($"Daten in CSV gespeichert: {csvFile}", Color.LightGreen);
+        }
+
 
         // Aktion bei Programmwechsel
         private void comboBoxProgram_SelectedIndexChanged(object sender, EventArgs e)
@@ -420,6 +478,39 @@ namespace Impeller_Wandstärke_GUI_App
             labelTolMin.Text = tol_min.ToString();
             labelTolMin.Visible = use_tol_min;
             labelTolMinT.Visible = use_tol_min;
+        }
+
+        private void checkBoxWANr_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!checkBoxWANr.Checked)
+            {
+                textBoxWANr.Text = "";
+            }
+            textBoxWANr.Enabled = checkBoxWANr.Checked;
+            SaveButtonStateCheck();
+        }
+
+        private void textBoxTeilnummer_TextChanged(object sender, EventArgs e)
+        {
+            SaveButtonStateCheck();
+        }
+
+        private void textBoxWANr_TextChanged(object sender, EventArgs e)
+        {
+            SaveButtonStateCheck();
+        }
+
+        private void SaveButtonStateCheck()
+        {
+            if (checkBoxWANr.Checked)
+            {
+                buttonSave.Enabled = !(string.IsNullOrWhiteSpace(textBoxTeilnummer.Text) || string.IsNullOrWhiteSpace(textBoxWANr.Text));
+            }
+            else
+            {
+                buttonSave.Enabled = !string.IsNullOrWhiteSpace(textBoxTeilnummer.Text);
+            }
+            buttonSave.BackColor = buttonSave.Enabled ? Color.LightBlue : Color.LightGray;
         }
     }
 }
